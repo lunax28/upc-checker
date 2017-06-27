@@ -61,7 +61,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>UpcGUI</mainClass>
+                            <mainClass>com.equilibrium.upcchecker.UpcGUI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

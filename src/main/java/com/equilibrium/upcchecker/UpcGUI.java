@@ -152,13 +152,13 @@ public class UpcGUI extends javax.swing.JFrame {
             try {
                 scanner = new Scanner(upcListTextArea.getText());
 
-                for (int i = 0; i < 15; i++) {
+                //for (int i = 0; i < 15; i++) {
 
-                    if (scanner.hasNextLine()) {
+                    while(scanner.hasNextLine()) {
                             link = ("https://api.spotify.com/v1/search?q=upc:" + scanner.nextLine() + "&type=album");
                             linkArray.add(link);
                     }
-                }
+                //}
             } finally {
                 if (scanner != null) {
                     scanner.close();
