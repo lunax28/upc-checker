@@ -13,9 +13,20 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedWriter;
 import java.util.List;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -32,7 +43,7 @@ public class UpcGUI extends javax.swing.JFrame {
      */
     public UpcGUI() {
         initComponents();
-        
+
     }
 
     /**
@@ -134,44 +145,103 @@ public class UpcGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-     
-    
-    
-    
+
     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
-        
-        
+
         ApiClass apify = new ApiClass();
-        
+
         List<String> linkArray = new ArrayList<String>();
-        
-        String link = ""; 
+        List<String> upcArray = new ArrayList<String>();
+
+        String link = "";
         System.out.println("UPC QUERY LINK:: " + link);
         Scanner scanner = null;
+        String tmp ="";
+        try {
+            scanner = new Scanner(upcListTextArea.getText());
 
-            try {
-                scanner = new Scanner(upcListTextArea.getText());
-
-                //for (int i = 0; i < 15; i++) {
-
-                    while(scanner.hasNextLine()) {
-                            link = ("https://api.spotify.com/v1/search?q=upc:" + scanner.nextLine() + "&type=album");
-                            linkArray.add(link);
-                    }
-                //}
-            } finally {
-                if (scanner != null) {
-                    scanner.close();
-                }
+            //for (int i = 0; i < 15; i++) {
+            while (scanner.hasNextLine()) {
+                tmp = scanner.nextLine();
+                upcArray.add(tmp);
+                link = ("https://api.spotify.com/v1/search?q=upc:" + tmp + "&type=album");
+                linkArray.add(link);
             }
+            //}
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
+
+        /*
+        Path file = Paths.get("/Users/equilibrium/Desktop/test.txt");
+        List<String> apifyresult = new ArrayList();
+        for (String upclink : linkArray) {
+            apifyresult.add(apify.isAlbum(upclink).toString() + "\n");
+
+        }
+        try {
+            Files.write(file, apifyresult, Charset.forName("UTF-8"));
+
             
             for(String upclink : linkArray){
-                
-                //upcResultsTextArea.setText(apify.isAlbum(upclink).toString() + "\n"); 
-                upcResultsTextArea.append(apify.isAlbum(upclink).toString() + "\n");
-                
-            }         
             
+            //upcResultsTextArea.setText(apify.isAlbum(upclink).toString() + "\n");
+            upcResultsTextArea.append(apify.isAlbum(upclink).toString() + "\n");
+            
+            }    
+             
+        } catch (IOException ex) {
+            Logger.getLogger(UpcGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         */
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+
+            String content = "This is the content to write into file\n";
+
+            fw = new FileWriter("/Users/equilibrium/Desktop/UPCCheck.txt");
+            bw = new BufferedWriter(fw);
+            int index = 0;
+            List<String> apifyresult = new ArrayList();
+            for (String upclink : linkArray) {
+                apifyresult.add(upcArray.get(index) + "," + apify.isAlbum(upclink).toString() + "\n");
+                index++;
+            }
+            
+            for(String a : apifyresult){
+                bw.write(a);
+                
+            }
+         
+            System.out.println("Done");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            try {
+
+                if (bw != null) {
+                    bw.close();
+                }
+
+                if (fw != null) {
+                    fw.close();
+                }
+
+            } catch (IOException ex) {
+
+                ex.printStackTrace();
+
+            }
+        }
+
     }//GEN-LAST:event_jButtonActionPerformed
 
     private void copyItemMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyItemMenuActionPerformed

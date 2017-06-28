@@ -85,7 +85,7 @@ public class ApiClass {
         try {
             URL url = new URL(link);
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-            String basicAuth = "Bearer " + "BQBdpOuMDHLWxr5thVnUETZmybLIOfad-vq01VvcBkigmIn19Jz_N_T5WFF3qupFWUFgIKvvFdyI_w_FKWR25w"; //getToken();//"BQD5PgY20-9WFB0xWoKAKF8Lip7z_it6HG__w0lxzdRaS8NGhtx-AfGhumYKK3sO5Zn3tEBjcBqWxxFRlum7bA"; //+ token;
+            String basicAuth = "Bearer " + "BQBERpBRRUeuZ4tjxtRBq__FrTpEaecFUmTCd9gwgvwmcGqie5SVMum-RQRATj5FMlsyeg5WuWj6W7qkUnjFwQ"; //getToken();//"BQD5PgY20-9WFB0xWoKAKF8Lip7z_it6HG__w0lxzdRaS8NGhtx-AfGhumYKK3sO5Zn3tEBjcBqWxxFRlum7bA"; //+ token;
             httpCon.setRequestMethod("GET");
             httpCon.setRequestProperty("Authorization", basicAuth);
             
