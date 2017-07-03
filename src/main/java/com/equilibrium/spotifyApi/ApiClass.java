@@ -30,14 +30,18 @@ public class ApiClass {
     private String response;
     private JSONArray jArray;
     private String albumsJson;
+    private String tokenString;
+    private int responseCode;
 
     public ApiClass() {
         this.link = "";
         this.response="";
         this.jsonObject = null;
+        this.tokenString = "";
+        this.responseCode = 0;
     }
     
-    private static String getToken(){
+    public String getToken(){
         String json_response = "";
         
         try {
@@ -85,11 +89,17 @@ public class ApiClass {
         try {
             URL url = new URL(link);
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-            String basicAuth = "Bearer " + "BQBERpBRRUeuZ4tjxtRBq__FrTpEaecFUmTCd9gwgvwmcGqie5SVMum-RQRATj5FMlsyeg5WuWj6W7qkUnjFwQ"; //getToken();//"BQD5PgY20-9WFB0xWoKAKF8Lip7z_it6HG__w0lxzdRaS8NGhtx-AfGhumYKK3sO5Zn3tEBjcBqWxxFRlum7bA"; //+ token;
+            if(this.tokenString.isEmpty()){
+                
+                this.tokenString = this.getToken();
+                System.out.println("###\nREQUESTED NEW TOKEN!!!\n###");
+                
+            }
+            String basicAuth = "Bearer " + this.tokenString; //"BQBERpBRRUeuZ4tjxtRBq__FrTpEaecFUmTCd9gwgvwmcGqie5SVMum-RQRATj5FMlsyeg5WuWj6W7qkUnjFwQ"; //getToken();//"BQD5PgY20-9WFB0xWoKAKF8Lip7z_it6HG__w0lxzdRaS8NGhtx-AfGhumYKK3sO5Zn3tEBjcBqWxxFRlum7bA"; //+ token;
             httpCon.setRequestMethod("GET");
             httpCon.setRequestProperty("Authorization", basicAuth);
             
-            int responseCode = httpCon.getResponseCode();
+            this.responseCode = httpCon.getResponseCode();
             System.out.println("\nSending 'GET' request to URL : " + url);
             System.out.println("Response Code : " + responseCode);
             
@@ -241,4 +251,10 @@ public class ApiClass {
         response = "";
         return total.equals("1");
     }
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+    
+    
 }

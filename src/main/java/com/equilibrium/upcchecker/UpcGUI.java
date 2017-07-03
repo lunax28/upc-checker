@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,12 +40,22 @@ import java.util.logging.Logger;
  */
 public class UpcGUI extends javax.swing.JFrame {
 
+    File sourceFolderPath = null;
+
+    private String token;
+    private List<String> linkArray;
+    private List<String> upcArray;
+    private ApiClass apify;
+
     /**
      * Creates new form UpcGUI
      */
     public UpcGUI() {
         initComponents();
-
+        this.apify = new ApiClass();
+        this.token = this.apify.getToken();
+        this.linkArray = new ArrayList<String>();
+        this.upcArray = new ArrayList<String>();
     }
 
     /**
@@ -66,8 +78,9 @@ public class UpcGUI extends javax.swing.JFrame {
         upcListLabel1 = new javax.swing.JLabel();
         upcListLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        fileSelectorButton = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -89,25 +102,34 @@ public class UpcGUI extends javax.swing.JFrame {
 
         getTokenLabel.setText("Get Token");
 
+        upcListTextArea1.setEditable(false);
+        upcListTextArea1.setEnabled(false);
+
+        upcListTextArea2.setEditable(false);
+        upcListTextArea2.setEnabled(false);
+
         upcListLabel1.setText("ARTIST ID");
 
         upcListLabel2.setText("RESULTS");
 
         jButton1.setText("CHECK");
+        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("FOLDER");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        fileSelectorButton.setText("FOLDER");
+        fileSelectorButton.setEnabled(false);
+        fileSelectorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                fileSelectorButtonActionPerformed(evt);
             }
         });
 
         jButton3.setText("FOLDER");
+        jButton3.setEnabled(false);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -154,8 +176,8 @@ public class UpcGUI extends javax.swing.JFrame {
                                 .addComponent(upcListTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(upcListTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
@@ -163,7 +185,7 @@ public class UpcGUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                    .addComponent(fileSelectorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                                 .addGap(16, 16, 16)
                                 .addComponent(upcResultsTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
@@ -178,8 +200,11 @@ public class UpcGUI extends javax.swing.JFrame {
                         .addComponent(upcResultsLabel))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(176, 176, 176)
-                        .addComponent(getTokenLabel)))
-                .addContainerGap())
+                        .addComponent(getTokenLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,10 +223,12 @@ public class UpcGUI extends javax.swing.JFrame {
                             .addComponent(upcListTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(53, 53, 53)
-                        .addComponent(jButton2)
+                        .addComponent(fileSelectorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                .addGap(37, 37, 37)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(upcListLabel1)
                     .addComponent(upcListLabel2))
@@ -214,7 +241,7 @@ public class UpcGUI extends javax.swing.JFrame {
                         .addContainerGap(40, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addGap(113, 113, 113))))
@@ -226,15 +253,23 @@ public class UpcGUI extends javax.swing.JFrame {
 
     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
 
-        ApiClass apify = new ApiClass();
+        if (upcListTextArea.getText().isEmpty()) {
 
-        List<String> linkArray = new ArrayList<String>();
-        List<String> upcArray = new ArrayList<String>();
+            JOptionPane.showMessageDialog(this, "UPC list empty!");
+            return;
+
+        }
+
+        if (this.apify.getResponseCode() == 429 || this.apify.getResponseCode() == 0) {
+            apify = new ApiClass();
+            this.token = apify.getToken();
+
+        }
 
         String link = "";
         System.out.println("UPC QUERY LINK:: " + link);
         Scanner scanner = null;
-        String tmp ="";
+        String tmp = "";
         try {
             scanner = new Scanner(upcListTextArea.getText());
 
@@ -279,8 +314,6 @@ public class UpcGUI extends javax.swing.JFrame {
 
         try {
 
-            String content = "This is the content to write into file\n";
-
             fw = new FileWriter("/Users/equilibrium/Desktop/UPCCheck.txt");
             bw = new BufferedWriter(fw);
             int index = 0;
@@ -289,12 +322,12 @@ public class UpcGUI extends javax.swing.JFrame {
                 apifyresult.add(upcArray.get(index) + "," + apify.isAlbum(upclink).toString() + "\n");
                 index++;
             }
-            
-            for(String a : apifyresult){
+
+            for (String a : apifyresult) {
                 bw.write(a);
-                
+
             }
-         
+
             System.out.println("Done");
 
         } catch (IOException e) {
@@ -319,6 +352,9 @@ public class UpcGUI extends javax.swing.JFrame {
 
             }
         }
+
+        this.linkArray.clear();
+        this.upcArray.clear();
 
     }//GEN-LAST:event_jButtonActionPerformed
 
@@ -345,15 +381,27 @@ public class UpcGUI extends javax.swing.JFrame {
         } catch (UnsupportedFlavorException | IOException ex) {
             Logger.getLogger(UpcGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+
     }//GEN-LAST:event_pasteItemMenuActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void fileSelectorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSelectorButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(null);
+        chooser.setDialogTitle("Choose a folder");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+            sourceFolderPath = chooser.getSelectedFile();
+        }
+
+    }//GEN-LAST:event_fileSelectorButtonActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -396,14 +444,15 @@ public class UpcGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem copyItemMenu;
+    private javax.swing.JButton fileSelectorButton;
     private javax.swing.JLabel getTokenLabel;
     private javax.swing.JButton jButton;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JMenuItem pasteItemMenu;
     private javax.swing.JLabel upcListLabel;
     private javax.swing.JLabel upcListLabel1;
