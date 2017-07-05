@@ -56,8 +56,6 @@ public class ApiClass  {
                     httpCon.getOutputStream());
             out.write("grant_type=client_credentials");
             out.flush();
-            //System.out.println(httpCon.getResponseCode());
-            //System.out.println(httpCon.getResponseMessage());
             out.close();
 
             InputStreamReader in = new InputStreamReader(httpCon.getInputStream());
@@ -66,7 +64,6 @@ public class ApiClass  {
             while ((text = br.readLine()) != null) {
                 json_response += text;
             }
-            //System.out.println(json_response);
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(ApiClass.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,11 +98,11 @@ public class ApiClass  {
 
             this.responseCode = httpCon.getResponseCode();
 
-            if (this.responseCode == 429 || this.responseCode == 0) {
+            if (this.responseCode == 429 || this.responseCode == 0 || this.responseCode == 502) {
                 System.out.println("###\nRESPONSE CODE 429 or 0!!!!\n###");
                 return null;
 
-            }
+            } 
 
             System.out.println("\nSending 'GET' request to URL : " + url);
             System.out.println("Response Code : " + responseCode);
@@ -127,7 +124,6 @@ public class ApiClass  {
         }
 
         this.jsonObject = new JsonParser().parse(response).getAsJsonObject();
-        //System.out.println("PRINTING JSON: " + this.jsonObject.toString());
         return this.jsonObject;
 
     }
@@ -149,7 +145,6 @@ public class ApiClass  {
 
         System.out.println("ARRAY: " + jArray.toString());
 
-        //array.length() >= 3
         JSONObject job = jArray.getJSONObject(0);
         System.out.println("JOB: " + job.toString());
         String albumId = job.getString("id");
@@ -175,8 +170,6 @@ public class ApiClass  {
         JSONObject jsonObj = new JSONObject(this.albumsJson);
         this.jArray = jsonObj.getJSONArray("items");
 
-        //System.out.println("ARRAY: " + jArray.toString());
-        //array.length() >= 3
         JSONObject job = this.jArray.getJSONObject(0);
         System.out.println("JOB: " + job.toString());
 
@@ -226,8 +219,6 @@ public class ApiClass  {
         String albumArtists = arrayArtists.getString("name");
         System.out.println("ARTISTS NAME: " + albumArtists);
 
-        //this.jArray = jsonObj.getJSONArray("artists");
-        //System.out.println("this.jArray " + this.jArray.toString());
         return albumArtists;
     }
 
